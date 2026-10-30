@@ -59,3 +59,7 @@ If a skill then says the profile is older than it expects, run `/stazelabs:setup
 ## Improving it
 
 Edit here, not in `~/.claude/plugins/cache`: that copy is replaced on update. See [docs/contributing.md](docs/contributing.md) for the local dev loop and [docs/migrating-a-project.md](docs/migrating-a-project.md) for moving a project's existing local skills onto the plugin.
+
+## License
+
+MIT; see [LICENSE](LICENSE). The repository itself is still private: the license governs what people who have access may do with it.
