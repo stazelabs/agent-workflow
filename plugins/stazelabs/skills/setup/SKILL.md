@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Set up (or revise) a project's agent-workflow profile at .claude/agent-workflow/profile.json: detect the ticketing MCP, gh and the superpowers plugin, ask for the team, labels, gate, branch and merge style, review rules, hard stops and optional deploy target, then write the file. Use when the user runs /stazelabs:setup, when another /stazelabs skill says the project isn't set up, or when the user asks to configure, initialize or change the workflow settings for a project.
+description: Set up (or revise) a project's agent-workflow profile at .claude/agent-workflow/profile.json: detect the ticketing MCP, gh and the superpowers plugin, ask for the team, labels, gate, branch and merge style, review rules, hard stops and optional deploy target, then write the file and scaffold any missing audit packs. Use when the user runs /stazelabs:setup, when another /stazelabs skill says the project isn't set up, or when the user asks to configure, initialize or change the workflow settings for a project.
 argument-hint: (none)   re-run to review or change the profile
 ---
 
@@ -32,19 +32,20 @@ Use `AskUserQuestion` where a short menu fits (teams, merge style, yes/no), plai
 6. **hardStops**: the actions that wait for the owner's yes, in their words. Remind them that destructive actions and changes to authority documents are always hard stops and needn't be listed.
 7. **deploy**: ask "Does this project deploy through a tag-triggered GitHub Action (the `/stazelabs-go:preview-deploy` flow)?" If yes: `provider` (`fly`), `app`, `url`, `healthz` (default `/healthz`), `tagPrefix` (suggest from any workflow whose trigger is `push: tags`), `workflow` (that file), `ciWorkflow` (a manual-dispatch workflow, if any), `runbooks` (suggest `ops/*.md` files found), `preDeployCheck` (optional). If no, omit the object.
 8. **state**: `committed` (default true; when false, add `.claude/agent-workflow/state/` to `.gitignore`).
+9. **audit packs** (optional): list which of `.claude/agent-workflow/audits/{hygiene,continuity,qa,update-docs}.md` exist. For each missing one, ask whether to scaffold it from `${CLAUDE_PLUGIN_ROOT}/templates/audits/<skill>.md`. Explain that the audit skills (`/stazelabs:hygiene`, `/stazelabs:continuity`, `/stazelabs:qa`, `/stazelabs:update-docs`) won't run without their pack, and that the pack is where the project's dimensions, surfaces and known non-findings live (`${CLAUDE_PLUGIN_ROOT}/docs/audit-packs.md`). Offer to pre-fill what you detected (the instruction file under Standards, lint and test targets under Pre-pass, a docs folder under Surfaces). Never overwrite an existing pack.
 
 ## 3. Write
 
 - Assemble the JSON with `"version": 1`, keys in the order above, two-space indent. Show the whole file in a fenced block and ask for a yes.
-- Write `.claude/agent-workflow/profile.json`, create `.claude/agent-workflow/state/` with a `.gitkeep`, and apply the `.gitignore` line if `state.committed` is false.
+- Write `.claude/agent-workflow/profile.json`, create `.claude/agent-workflow/state/` with a `.gitkeep`, apply the `.gitignore` line if `state.committed` is false, and write any audit packs the owner said yes to.
 - Don't commit; tell the owner the files are ready to commit, and that teammates get the profile with the repo.
 
 ## 4. Report
 
-List: what was detected and what is missing (tracker, `gh`, superpowers), the profile path, the sections written, any labels created, and the commands now available (`/stazelabs:plan`, `/stazelabs:ticket`, and `/stazelabs-go:preview-deploy` if `deploy` was set and that plugin is installed).
+List: what was detected and what is missing (tracker, `gh`, superpowers), the profile path, the sections written, any labels created, the audit packs written or still missing, and the commands now available (`/stazelabs:plan`, `/stazelabs:ticket`, each audit skill whose pack exists, and `/stazelabs-go:preview-deploy` if `deploy` was set and that plugin is installed).
 
 ## Guardrails
 
 - The only tracker write is label creation, after an explicit yes. Never create or edit tickets.
-- Never run the gate, deploy, push, or change the repo beyond the profile, the state folder and the `.gitignore` line.
+- Never run the gate, deploy, push, or change the repo beyond the profile, the state folder, the `.gitignore` line and new audit packs.
 - A re-run never silently rewrites a section the owner didn't ask to change.

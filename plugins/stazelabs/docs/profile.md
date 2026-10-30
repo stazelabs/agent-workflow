@@ -6,7 +6,7 @@ Every project that uses these skills carries one file, committed:
 
 `/stazelabs:setup` writes it and edits it. The skills read it and never write it. A skill that finds the file missing, its `version` behind what the skill expects, or a key it needs absent, stops with "this project isn't set up for /stazelabs:<skill> yet: run /stazelabs:setup" and does nothing else. Project facts live here or in the project's own instruction files (CLAUDE.md and the documents `project.authority` lists), never inside a skill.
 
-State the skills keep between runs (none in v1) goes beside it in `.claude/agent-workflow/state/<skill>.json`. A missing state file means a first run, never that setup is needed.
+State the skills keep between runs goes beside it in `.claude/agent-workflow/state/<skill>.json`: today `hygiene.json`, `continuity.json`, `qa.json` and `update-docs.json`, written by the audit skills. A missing state file means a first run, never that setup is needed. The audit skills also read a per-project audit pack at `.claude/agent-workflow/audits/<skill>.md`; its headings are in [audit-packs.md](audit-packs.md).
 
 ## Keys
 
@@ -23,29 +23,29 @@ State the skills keep between runs (none in v1) goes beside it in `.claude/agent
 
 | Key | Type | Required by | Meaning |
 |---|---|---|---|
-| `kind` | string | plan, ticket, setup | The adapter file to use: `plugins/stazelabs/trackers/<kind>.md`. v1 ships `linear`. |
-| `team` | string | plan, ticket | The team (or project) whose tickets these skills work. The adapter says how it is identified. |
-| `prefix` | string | plan, ticket | The ticket key prefix, `EMAIL` in `EMAIL-12`. Also seeds `repo.branchPattern`. |
+| `kind` | string | plan, ticket, setup, hygiene, continuity, qa | The adapter file to use: `plugins/stazelabs/trackers/<kind>.md`. v1 ships `linear`. |
+| `team` | string | plan, ticket, hygiene, continuity, qa | The team (or project) whose tickets these skills work. The adapter says how it is identified. |
+| `prefix` | string | plan, ticket, qa | The ticket key prefix, `EMAIL` in `EMAIL-12`. Also seeds `repo.branchPattern`. |
 | `states.started` | string | ticket | The state name a ticket takes when work begins. |
 | `states.done` | string | ticket | The state name a ticket takes when its PR is merged. |
-| `modelLabels` | object | plan, ticket | Maps the four tiers (`fable`, `haiku`, `sonnet`, `opus`) to the label names in the tracker. Usually identical. `fable` means spec work, not code; the other three are implementation tiers. |
+| `modelLabels` | object | plan, ticket, hygiene, continuity, qa | Maps the four tiers (`fable`, `haiku`, `sonnet`, `opus`) to the label names in the tracker. Usually identical. `fable` means spec work, not code; the other three are implementation tiers. |
 
 ### `repo`
 
 | Key | Type | Required by | Meaning |
 |---|---|---|---|
-| `mainBranch` | string | ticket, preview-deploy | Usually `main`. |
+| `mainBranch` | string | ticket, preview-deploy, all audit skills | Usually `main`. |
 | `branchPattern` | string | ticket | Branch name template. Placeholders: `{prefix_lower}`, `{number}`, `{slug}`. Default `{prefix_lower}-{number}-{slug}`. |
 | `commitFormat` | string | ticket | Commit subject template. Placeholders: `{Area}`, `{summary}`, `{id}`. Default `{Area}: {summary} ({id})`. |
-| `mergeStyle` | `merge`, `squash` or `rebase` | ticket | How `gh pr merge` merges. Stazelabs projects use `merge`. |
-| `deleteBranchOnMerge` | boolean | ticket | Pass `--delete-branch`. |
-| `neverTriggerCI` | boolean | ticket, preview-deploy | When true, the skills never dispatch a workflow and never add push or pull_request triggers; the local gate is the gate. |
+| `mergeStyle` | `merge`, `squash` or `rebase` | ticket, all audit skills | How `gh pr merge` merges. Stazelabs projects use `merge`. |
+| `deleteBranchOnMerge` | boolean | ticket (read by the audit skills when they merge) | Pass `--delete-branch`. |
+| `neverTriggerCI` | boolean | ticket, preview-deploy (read by the audit skills) | When true, the skills never dispatch a workflow and never add push or pull_request triggers; the local gate is the gate. |
 
 ### `gate`
 
 | Key | Type | Required by | Meaning |
 |---|---|---|---|
-| `command` | string | plan, ticket | The one shell command that must pass before a merge. |
+| `command` | string | plan, ticket, update-docs | The one shell command that must pass before a merge. |
 | `notes` | string[] | ticket | Known gate quirks and their fixes, one per line, quoted to the implementer. Optional. |
 | `smoke.command` | string | ticket | A second, slower check run only when the diff touches `smoke.paths`. Optional; omit the whole `smoke` object when there is none. |
 | `smoke.paths` | string[] | ticket | Path prefixes that make the smoke run mandatory. |
@@ -60,7 +60,7 @@ State the skills keep between runs (none in v1) goes beside it in `.claude/agent
 
 ### `hardStops`
 
-string[], required by ticket. Actions that wait for the owner's yes in chat, in the owner's words ("any Fly, DNS or Resend action"). Two are always in force even if the list is empty: anything destructive (deleting data or branches the skill didn't make, force-push, rewriting history) and changing a recorded product decision in a `project.authority` document.
+string[], required by ticket and the audit skills. Actions that wait for the owner's yes in chat, in the owner's words ("any Fly, DNS or Resend action"). Two are always in force even if the list is empty: anything destructive (deleting data or branches the skill didn't make, force-push, rewriting history) and changing a recorded product decision in a `project.authority` document.
 
 ### `deploy`
 

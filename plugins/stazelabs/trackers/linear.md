@@ -19,6 +19,8 @@ The Linear MCP is a connector the person set up themselves; it is not bundled. I
 | Set state | `save_issue` | `id` and `state: "<name>"` using the profile's `tracker.states.*` names verbatim. Only if refused, `list_issue_statuses` for the team and use the `started` or `completed` type's name. |
 | Comment | `save_comment` | `issueId`, `body` as markdown with real newlines (no escape sequences). |
 | Set the Model label | `save_issue` | `id`, `removeLabels`: the `tracker.modelLabels` values currently on the ticket, `addLabels`: the chosen one. Both are incremental and leave every other label alone. Never send `labels`: it replaces the whole set. |
+| Search tickets | `list_issues` | `team`: `tracker.team`, `query`: the hazard's keywords. Used by the audit skills to dedupe before filing; read open tickets only. |
+| Create a ticket | `save_issue` | `team`: `tracker.team`, `title`, `description` (markdown, real newlines), `labels`: the full list of label names (on create there is no prior set to replace), `priority` when the skill sets one (1 Urgent, 2 High). Omit `state` and `assignee` so the team defaults apply. Returns the new `identifier` and `url`. |
 | List children | `list_issues` | `parentId`: the epic's identifier. Page with `cursor` until exhausted. |
 | List labels | `list_issue_labels` | Filter by `team` to confirm the Model label group exists. |
 | List teams | `list_teams` | Used by setup to let the person pick; the team's `key` is the ticket prefix. |
@@ -30,4 +32,4 @@ The Linear MCP is a connector the person set up themselves; it is not bundled. I
 - Identifiers are `<PREFIX>-<n>`; the prefix is the team key and matches `tracker.prefix`.
 - A ticket with sub-issues is an epic. Children already Done, Canceled or Duplicate are skipped.
 - State names are stable per workspace; don't look them up on every run.
-- Label writes use `addLabels` and `removeLabels`; `labels` is a full replace and is never sent.
+- Label writes on an existing ticket use `addLabels` and `removeLabels`; `labels` is a full replace and is sent only when creating a ticket.
