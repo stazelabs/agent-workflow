@@ -6,7 +6,7 @@ argument-hint: (none)   re-run to review or change the profile
 
 # /stazelabs:setup: write or revise the project profile
 
-The profile is the one place a project's specifics live: which tracker and team, what the gate is, how branches and merges look, what needs the owner's yes, where deploys go. The skills read it and refuse to run without it. This skill is the only thing that writes it. The schema is `${CLAUDE_PLUGIN_ROOT}/../../docs/profile.md` in the marketplace checkout, and a filled example is `${CLAUDE_PLUGIN_ROOT}/templates/profile.example.json`; read both first.
+The profile is the one place a project's specifics live: which tracker and team, what the gate is, how branches and merges look, what needs the owner's yes, where deploys go. The skills read it and refuse to run without it. This skill is the only thing that writes it. The schema is `${CLAUDE_PLUGIN_ROOT}/docs/profile.md`, and a filled example is `${CLAUDE_PLUGIN_ROOT}/templates/profile.example.json`; read both first.
 
 Ask one section at a time, suggest defaults from what you detect, and show the finished file before writing it. Never guess a value silently.
 

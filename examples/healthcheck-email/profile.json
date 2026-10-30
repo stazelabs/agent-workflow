@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "project": {
+    "name": "healthcheck.email",
+    "authority": ["CLAUDE.md", "docs/superpowers/specs"]
+  },
+  "tracker": {
+    "kind": "linear",
+    "team": "healthcheck-email",
+    "prefix": "EMAIL",
+    "states": { "started": "In Progress", "done": "Done" },
+    "modelLabels": { "fable": "fable", "haiku": "haiku", "sonnet": "sonnet", "opus": "opus" }
+  },
+  "repo": {
+    "mainBranch": "main",
+    "branchPattern": "{prefix_lower}-{number}-{slug}",
+    "commitFormat": "{Area}: {summary} ({id})",
+    "mergeStyle": "merge",
+    "deleteBranchOnMerge": true,
+    "neverTriggerCI": true
+  },
+  "gate": {
+    "command": "make gen && make fmt && make vet && make lint && make test && make cover-check",
+    "notes": [
+      "make lint is modernize-check plus staticcheck; if modernize-check fails, run make modernize and rerun",
+      "make gen rewrites committed generated files (*_templ.go, internal/db/gen, tailwind, icons): commit whatever it changes, never edit them by hand",
+      "scratch servers run with RESEND_API_KEY blank and are stopped by PID, never pkill -f"
+    ],
+    "smoke": {
+      "command": "RESEND_API_KEY= make smoke",
+      "paths": ["internal/web/templates/", "internal/web/static/", "e2e/"]
+    }
+  },
+  "review": {
+    "model": "opus",
+    "skipUnderLines": 50,
+    "alwaysReviewPaths": [
+      "internal/web/handlers", "internal/web/router.go", "internal/db", "internal/engine",
+      "internal/jobs", "internal/auth", "internal/netguard", "internal/smtpprobe", "*.sql"
+    ]
+  },
+  "hardStops": [
+    "any Fly, DNS or Resend action (deploys, secrets, records, sending domains)"
+  ],
+  "deploy": {
+    "provider": "fly",
+    "app": "healthcheck-email-preview",
+    "url": "https://preview.healthcheck.email",
+    "healthz": "/healthz",
+    "tagPrefix": "preview-",
+    "workflow": "deploy-preview.yml",
+    "ciWorkflow": "ci.yml",
+    "runbooks": ["ops/FLY.md", "ops/LAUNCH.md"],
+    "preDeployCheck": "SMOKE_DOMAIN=stazelabs.com make prod-check"
+  },
+  "state": { "committed": true }
+}

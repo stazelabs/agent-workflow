@@ -86,4 +86,4 @@ Required only by `/stazelabs-go:preview-deploy`. Omit the object when the projec
 
 ## Example
 
-See `plugins/stazelabs/templates/profile.example.json`, which is healthcheck.email's profile.
+See `../templates/profile.example.json` (`plugins/stazelabs/templates/profile.example.json` in the repo), which is healthcheck.email's profile.
