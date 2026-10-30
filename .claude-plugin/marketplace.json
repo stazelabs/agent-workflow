@@ -1,0 +1,22 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
+  "name": "agent-workflow",
+  "description": "Stazelabs' Claude Code workflow: ticket to plan to merge to deploy, configured per project.",
+  "owner": { "name": "Stazelabs", "url": "https://github.com/stazelabs" },
+  "plugins": [
+    {
+      "name": "stazelabs",
+      "source": "./plugins/stazelabs",
+      "description": "Core workflow skills: /stazelabs:setup, /stazelabs:plan, /stazelabs:ticket. Stack-neutral; needs a ticketing MCP (Linear first) and the superpowers plugin.",
+      "category": "productivity",
+      "tags": ["workflow", "linear", "tickets", "tdd", "code-review"]
+    },
+    {
+      "name": "stazelabs-go",
+      "source": "./plugins/stazelabs-go",
+      "description": "Go companion: /stazelabs-go:preview-deploy (tag-triggered, gate-first Fly deploy) and a gopls refresh hook.",
+      "category": "deployment",
+      "tags": ["go", "fly", "deploy", "gopls"]
+    }
+  ]
+}

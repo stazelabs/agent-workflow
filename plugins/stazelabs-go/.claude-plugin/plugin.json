@@ -1,0 +1,8 @@
+{
+  "name": "stazelabs-go",
+  "version": "0.1.0",
+  "description": "Stazelabs Go companion: tag-triggered preview deploys to Fly and a gopls refresh hook.",
+  "author": { "name": "Stazelabs", "url": "https://github.com/stazelabs" },
+  "repository": "https://github.com/stazelabs/agent-workflow",
+  "keywords": ["go", "fly", "deploy", "gopls"]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "stazelabs",
+  "version": "0.1.0",
+  "description": "Stazelabs workflow: set up a project profile, plan and model-tag a ticket, resolve a ticket from branch to merge.",
+  "author": { "name": "Stazelabs", "url": "https://github.com/stazelabs" },
+  "repository": "https://github.com/stazelabs/agent-workflow",
+  "keywords": ["workflow", "linear", "tickets", "tdd", "code-review"]
+}
