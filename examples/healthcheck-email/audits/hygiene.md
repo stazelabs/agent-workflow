@@ -17,7 +17,7 @@ make lint              # modernize-check plus staticcheck, pinned to LINT_TOOLCH
 make cover-check       # package coverage floors in coverage-floors.txt
 ```
 
-Optional, manual, not part of the gate: `go run golang.org/x/vuln/cmd/govulncheck ./...` for dependency CVEs. Run it for the security dimension; a real hit is a finding. Do not add it to the Makefile or a workflow.
+Optional, manual, not part of the gate: `go run golang.org/x/vuln/cmd/govulncheck@latest ./...` for dependency CVEs. Run it for the security dimension; a real hit is a finding. Do not add it to the Makefile or a workflow. Keep the `@latest` (the module is not in go.mod, so the bare path fails), and never run it with `GOFLAGS=-mod=mod` or `go get` it: either rewrites go.mod and go.sum. Check `git status` is clean afterwards.
 
 ## Dimensions
 
