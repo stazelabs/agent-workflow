@@ -1,0 +1,18 @@
+{
+  "description": "Restart gopls when .go files changed on disk outside the editor (after a git checkout, merge or generator run), so the LSP never serves stale diagnostics.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && [ -f go.mod ] || exit 0; s=\"$HOME/.cache/agent-workflow-gopls-$(basename \"$PWD\").stamp\" && mkdir -p \"$HOME/.cache\" && if [ ! -f \"$s\" ] || [ -n \"$(find . -name '*.go' -not -path './.git/*' -newer \"$s\" -print -quit)\" ]; then pkill -x gopls; touch \"$s\"; fi",
+            "timeout": 10,
+            "statusMessage": "gopls: checking for on-disk .go changes"
+          }
+        ]
+      }
+    ]
+  }
+}
