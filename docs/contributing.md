@@ -6,7 +6,7 @@
 - `plugins/stazelabs-go`: the Go companion. `skills/preview-deploy`, `hooks/hooks.json`.
 - `docs/`: the workflow model, this file, the migration guide, the tracker seam.
 - `docs/superpowers/specs`: design documents, frozen once merged.
-- `examples/`: real profiles from real projects.
+- `examples/`: real profiles and audit packs from real projects.
 
 ## Rules
 

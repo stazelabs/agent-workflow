@@ -7,7 +7,7 @@
     {
       "name": "stazelabs",
       "source": "./plugins/stazelabs",
-      "description": "Core workflow skills: /stazelabs:setup, /stazelabs:plan, /stazelabs:ticket. Stack-neutral; needs a ticketing MCP (Linear first) and the superpowers plugin.",
+      "description": "Core workflow skills: /stazelabs:setup, /stazelabs:plan, /stazelabs:ticket, and the audits /stazelabs:hygiene, /stazelabs:continuity, /stazelabs:qa, /stazelabs:update-docs. Stack-neutral; needs a ticketing MCP (Linear first) and the superpowers plugin.",
       "category": "productivity",
       "tags": ["workflow", "linear", "tickets", "tdd", "code-review"]
     },

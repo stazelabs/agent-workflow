@@ -11,9 +11,15 @@ This repository is private and under close hold. Ask the owner for access.
 | `/stazelabs:setup` | `stazelabs` | Detects your tracker MCP, `gh` and superpowers, asks for the project's specifics, writes `.claude/agent-workflow/profile.json`. Re-run to change it. |
 | `/stazelabs:plan <id>` | `stazelabs` | Reads a ticket, grounds a plan in the codebase, gets your approval, posts the plan as a comment and sets the ticket's Model label (fable, haiku, sonnet or opus). |
 | `/stazelabs:ticket <id>` | `stazelabs` | Resolves a ticket: branch from fresh main, test-first implementation on the labeled model, the project's gate, a final review, PR, merge, close. An epic fans out over its children. |
+| `/stazelabs:hygiene` | `stazelabs` | Engineering-health audit of the code (dead code, layering, security, performance, tests). Verifies each finding itself, files grouped tickets after your yes. Never fixes. |
+| `/stazelabs:continuity` | `stazelabs` | UI, UX and copy standards audit from source: written-rule deviations and peer-set discontinuities. Files tickets after your yes. |
+| `/stazelabs:qa` | `stazelabs` | Boots a disposable copy of the web app, drives it through Chrome, traces each defect to a line, files tickets after your yes. |
+| `/stazelabs:update-docs` | `stazelabs` | Reconciles the docs with the code, verifies each correction, and lands it through a PR. |
 | `/stazelabs-go:preview-deploy` | `stazelabs-go` | Ships main to the preview by pushing a dated tag that fires a gate-first GitHub Action, after your explicit yes. Fly only in v1. |
 
 `stazelabs-go` also ships a hook that restarts gopls when `.go` files change on disk.
+
+The four audit skills carry the method; what to look for in a given project lives in its **audit packs** at `.claude/agent-workflow/audits/<skill>.md`, which `/stazelabs:setup` scaffolds. Format: [plugins/stazelabs/docs/audit-packs.md](plugins/stazelabs/docs/audit-packs.md). `/stazelabs:qa` also needs the Claude in Chrome extension.
 
 The model behind the commands is in [docs/workflow.md](docs/workflow.md). The profile's keys are in [plugins/stazelabs/docs/profile.md](plugins/stazelabs/docs/profile.md).
 
@@ -42,7 +48,7 @@ Then, in each project:
 /stazelabs:setup
 ```
 
-Commit the `.claude/agent-workflow/` folder it writes. The other skills refuse to run until it exists.
+Commit the `.claude/agent-workflow/` folder it writes. The other skills refuse to run until it exists, and each audit skill until its pack does.
 
 ## Update
 

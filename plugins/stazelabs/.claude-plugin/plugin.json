@@ -1,9 +1,9 @@
 {
   "name": "stazelabs",
-  "version": "0.1.0",
-  "description": "Stazelabs workflow: set up a project profile, plan and model-tag a ticket, resolve a ticket from branch to merge.",
+  "version": "0.2.0",
+  "description": "Stazelabs workflow: set up a project profile, plan and model-tag a ticket, resolve a ticket from branch to merge, and audit code, UI, the running app and docs into tickets.",
   "author": { "name": "Stazelabs", "url": "https://github.com/stazelabs" },
   "repository": "https://github.com/stazelabs/agent-workflow",
   "license": "MIT",
-  "keywords": ["workflow", "linear", "tickets", "tdd", "code-review"]
+  "keywords": ["workflow", "linear", "tickets", "tdd", "code-review", "audit", "qa"]
 }

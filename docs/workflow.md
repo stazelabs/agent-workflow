@@ -9,6 +9,8 @@ This is the model the skills implement. It grew on healthcheck.email over a few 
 3. **`/stazelabs:ticket`** reads the same ticket and comments, sets it started, branches from fresh main, implements test-first on the labeled model, runs the project's gate (and the smoke check if the diff touches UI paths), gets a final review from a stronger model, fixes Critical and Important findings in one pass, opens a PR whose body records every ruling, waits for GitHub to say the PR is clean, merges in the project's style, updates local main, comments the merge sha on the ticket and sets it done.
 4. **`/stazelabs-go:preview-deploy`** ships main: it computes a dated tag, shows what will deploy, waits for an explicit yes, pushes the tag, and watches the workflow that re-runs the gate and deploys. A tag that fails the gate never deploys.
 
+Feeding the loop, the **audit skills** (`/stazelabs:hygiene`, `/stazelabs:continuity`, `/stazelabs:qa`) sweep the codebase or the running app on a rotation, verify every claim in the main session, and file grouped, model-tagged tickets only after the owner's yes. They never fix. `/stazelabs:update-docs` is the one audit that edits, and only prose. Each run is recorded in `.claude/agent-workflow/state/<skill>.json` so the next run picks the least recently covered areas.
+
 An **epic** (a ticket with sub-issues) is resolved child by child, each on its own branch and PR, blockers first, after one confirmation of the ordered list.
 
 ## Model labels
@@ -40,4 +42,4 @@ A diff above `review.skipUnderLines` lines, or touching any of `review.alwaysRev
 
 ## The profile
 
-Everything project-specific lives in `.claude/agent-workflow/profile.json` and nowhere else. A skill that needs a key the profile lacks stops and says so. That rule is what lets one installed plugin serve many projects and lets improvements ship without anyone editing a skill by hand. The keys: [profile.md](../plugins/stazelabs/docs/profile.md).
+Everything project-specific lives in `.claude/agent-workflow/` and nowhere else: workflow settings in `profile.json`, and what each audit looks for in `audits/<skill>.md`. A skill that needs a key the profile lacks stops and says so. That rule is what lets one installed plugin serve many projects and lets improvements ship without anyone editing a skill by hand. The keys: [profile.md](../plugins/stazelabs/docs/profile.md). The pack headings: [audit-packs.md](../plugins/stazelabs/docs/audit-packs.md).

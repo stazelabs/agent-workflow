@@ -16,7 +16,7 @@ healthcheck-email grew a working Claude Code workflow: a Linear ticket is planne
 
 ## Non-goals (v1)
 
-- The audit skills (hygiene, continuity, qa, update-docs) and their state files. They stay in healthcheck until v2.
+- The audit skills (hygiene, continuity, qa, update-docs) and their state files. They stay in healthcheck until v2. (Shipped in 0.2.0 as generic skills plus per-project audit packs; see `plugins/stazelabs/docs/audit-packs.md`.)
 - A second tracker adapter. Linear ships; the seam for others is documented.
 - Bundling the Linear MCP or superpowers. Both are prerequisites the setup skill checks.
 - Shipping `.claude/rules`. Plugins cannot carry rules; they stay in each project.
