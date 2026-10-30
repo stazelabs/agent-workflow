@@ -25,7 +25,7 @@ State the skills keep between runs goes beside it in `.claude/agent-workflow/sta
 |---|---|---|---|
 | `kind` | string | plan, ticket, setup, hygiene, continuity, qa | The adapter file to use: `plugins/stazelabs/trackers/<kind>.md`. v1 ships `linear`. |
 | `team` | string | plan, ticket, hygiene, continuity, qa | The team (or project) whose tickets these skills work. The adapter says how it is identified. |
-| `prefix` | string | plan, ticket, qa | The ticket key prefix, `EMAIL` in `EMAIL-12`. Also seeds `repo.branchPattern`. |
+| `prefix` | string | plan, ticket, qa | The ticket key prefix, `PROJ` in `PROJ-12`. Also seeds `repo.branchPattern`. |
 | `states.started` | string | ticket | The state name a ticket takes when work begins. |
 | `states.done` | string | ticket | The state name a ticket takes when its PR is merged. |
 | `modelLabels` | object | plan, ticket, hygiene, continuity, qa | Maps the four tiers (`fable`, `haiku`, `sonnet`, `opus`) to the label names in the tracker. Usually identical. `fable` means spec work, not code; the other three are implementation tiers. |
@@ -86,4 +86,4 @@ Required only by `/stazelabs-go:preview-deploy`. Omit the object when the projec
 
 ## Example
 
-See `../templates/profile.example.json` (`plugins/stazelabs/templates/profile.example.json` in the repo), which is healthcheck.email's profile.
+See `../templates/profile.example.json` (`plugins/stazelabs/templates/profile.example.json` in the repo), a Go web app that deploys to Fly, anonymized from a real project. The same profile, with its audit packs, is under `examples/example-app/` in the repo.

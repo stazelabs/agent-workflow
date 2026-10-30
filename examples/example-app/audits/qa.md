@@ -8,9 +8,9 @@ Read [CLAUDE.md](../../../CLAUDE.md), "Hard invariants" especially. Also read th
 
 ## Never targets
 
-- The owner's dev server (`make dev`, port 8080) and its database `data/healthcheck.db`. If a command's output names `data/healthcheck.db` or port 8080, stop.
+- The owner's dev server (`make dev`, port 8080) and its database `data/app.db`. If a command's output names `data/app.db` or port 8080, stop.
 - The ngrok tunnel (`make tunnel`).
-- preview.healthcheck.email and anything on Fly.
+- preview.example.com and anything on Fly.
 - The dev `.env.local`, which holds a real Resend key.
 
 ## Boot
@@ -23,19 +23,19 @@ Pick a free port (not 8080; 8095 is the smoke default) and boot it in the backgr
 cd "$CLAUDE_PROJECT_DIR"
 port=8097; while curl -fsS -o /dev/null http://localhost:$port/healthz 2>/dev/null; do port=$((port+1)); done
 dir="$PWD/tmp/qa"; rm -rf "$dir"; mkdir -p "$dir"
-go build -o bin/healthcheck ./cmd/healthcheck
-export HC_ENV=dev HC_ADDR=":$port" HC_APP_BASE_URL="http://localhost:$port" HC_DB_PATH="$dir/qa.db" \
-  HC_FAKE_ZONE="$PWD/e2e/smoke.zone" HC_INVITE_ONLY= HC_LOG_FORMAT=text HC_LOG_LEVEL= \
-  HC_SESSION_SECRET= HC_MAGIC_LINK_HMAC_SECRET= HC_COOKIE_SECURE= HC_CLIENT_IP_HEADER= \
-  HC_RESOLVER_ADDR= HC_LLM_PRICES= EMAIL_FROM_ADDRESS= RESEND_API_KEY= ANTHROPIC_API_KEY=
-(cd "$dir" && exec "$OLDPWD/bin/healthcheck" serve) >"$dir/serve.log" 2>&1 &
+go build -o bin/app ./cmd/app
+export APP_ENV=dev APP_ADDR=":$port" APP_APP_BASE_URL="http://localhost:$port" APP_DB_PATH="$dir/qa.db" \
+  APP_FAKE_ZONE="$PWD/e2e/smoke.zone" APP_INVITE_ONLY= APP_LOG_FORMAT=text APP_LOG_LEVEL= \
+  APP_SESSION_SECRET= APP_MAGIC_LINK_HMAC_SECRET= APP_COOKIE_SECURE= APP_CLIENT_IP_HEADER= \
+  APP_RESOLVER_ADDR= APP_LLM_PRICES= EMAIL_FROM_ADDRESS= RESEND_API_KEY= ANTHROPIC_API_KEY=
+(cd "$dir" && exec "$OLDPWD/bin/app" serve) >"$dir/serve.log" 2>&1 &
 echo "port=$port pid=$!"
 ```
 
 - **Health:** `curl -s -o /dev/null -w '%{http_code}' http://localhost:$port/healthz` returns 200 (`GET /healthz` in `router.go`).
 - **Log:** `tmp/qa/serve.log`, logfmt text.
-- **Sign in:** under the scratch environment, `make signin-link email=qa-owner@example.com` (it runs `go run ./cmd/healthcheck admin signin-link`; `./bin/healthcheck admin signin-link qa-owner@example.com` is equivalent). Open the printed link in a new tab and press Sign in. There is no mail sink, which is why the link comes from the CLI.
-- **Superadmin for the admin slice:** `make set-superadmin email=qa-owner@example.com` under the same environment. Never run it without the scratch `HC_DB_PATH` exported: without it the command would hit `data/healthcheck.db`.
+- **Sign in:** under the scratch environment, `make signin-link email=qa-owner@example.com` (it runs `go run ./cmd/app admin signin-link`; `./bin/app admin signin-link qa-owner@example.com` is equivalent). Open the printed link in a new tab and press Sign in. There is no mail sink, which is why the link comes from the CLI.
+- **Superadmin for the admin slice:** `make set-superadmin email=qa-owner@example.com` under the same environment. Never run it without the scratch `APP_DB_PATH` exported: without it the command would hit `data/app.db`.
 
 ## Areas
 
@@ -57,7 +57,7 @@ Flow slices:
 | J | Share links | Domain Settings: create a share link (admin), open `/r/{token}` signed out (a fresh tab with no cookies cannot be had in one Chrome profile, so use a private window if the user supplies one, else sign out first), `/r/{token}/report.md`, the read-only page has no controls or feedback, `X-Robots-Tag: noindex`, revoke and re-open (expect a graceful page), calendar feed (`/cal/{token}`) |
 | K | Header analyzer | `/w/{slug}/headers`: paste the sample headers from [e2e/smoke.spec.js](../../../e2e/smoke.spec.js), "Check headers", "What we found", Hops; an empty paste, an oversized paste, garbage; the per-hour paste limit message |
 | L | Admin pages | `/admin` (Overview), access, users, workspaces, domains and a domain detail, feedback, questions, jobs, inbound, configuration, quirks, smart-features. Viewing is fine; see Limits |
-| M | Install and offline | `/offline` (carries no person or toast), `/manifest.webmanifest`, `/sw.js`, the home-screen hint (`#hc-install`, hidden unless a phone; needs a phone user agent, so drive it with the smoke test's approach or a narrow window and the user's say-so), Not now sticking |
+| M | Install and offline | `/offline` (carries no person or toast), `/manifest.webmanifest`, `/sw.js`, the home-screen hint (`#app-install`, hidden unless a phone; needs a phone user agent, so drive it with the smoke test's approach or a narrow window and the user's say-so), Not now sticking |
 
 Cross-cutting passes N to T are the skill's. App specifics:
 
@@ -66,7 +66,7 @@ Cross-cutting passes N to T are the skill's. App specifics:
 - **P**: the domain tab bar swaps to short labels below `sm`, the header wraps its nav, and tables scroll in their own wrapper. Pages worth the probe: home, domains, a domain's six tabs, `/cases/new` and a case, `/headers` and a result, `/members`, `/account`, `/r/{token}`, `/signin`, `/offline`, and `/admin` tables.
 - **Q**: tab through the domain tab bar, the switches, forms and the sign-out control.
 - **R**: bad domain, an email without a domain, a very long note; success is a toast; a missing entity (a stale domain id) redirects with a flash, never a 404.
-- Async: a new domain's report arrives in place by polling (the smoke test allows 75 seconds). The fake zone makes it fast; a report that never appears, or a page that reloads to show it, is a finding (`window.hcNoReload` stays true).
+- Async: a new domain's report arrives in place by polling (the smoke test allows 75 seconds). The fake zone makes it fast; a report that never appears, or a page that reloads to show it, is a finding (`window.appNoReload` stays true).
 
 ### Pass S: role gating with real second accounts
 

@@ -85,8 +85,8 @@ Read-only treatment: share pages carry no feedback or controls by design. Missin
 - **Frozen history**: docs/superpowers/specs and plans are not audited.
 - **The Combobox's phone bottom sheet is a `<dialog>`** that app.js creates at enhance time; it is not a raw dialog.
 - **Select with under about 8 plain options** is the intended control, not a missing Combobox.
-- **`TabHeader` has one consumer, the Services tab**, by an owner ruling on 2026-10-29: it is the head for a domain tab that carries header actions (EMAIL-489), and the other tabs open straight into cards with their own `h2`. Don't file its adoption ratio.
-- **The avatar menu's Admin and Role entries are red** (`layout.templ`, superadmins only): a deliberate mark of the superadmin area (EMAIL-180), not `danger` decorating.
+- **`TabHeader` has one consumer, the Services tab**, by an owner ruling on 2026-10-29: it is the head for a domain tab that carries header actions, and the other tabs open straight into cards with their own `h2`. Don't file its adoption ratio.
+- **The avatar menu's Admin and Role entries are red** (`layout.templ`, superadmins only): a deliberate mark of the superadmin area, not `danger` decorating.
 
 Peer-check specific (dimensions 5 and 7), where a difference is correct:
 

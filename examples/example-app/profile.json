@@ -1,13 +1,13 @@
 {
   "version": 1,
   "project": {
-    "name": "healthcheck.email",
+    "name": "example-app",
     "authority": ["CLAUDE.md", "docs/superpowers/specs"]
   },
   "tracker": {
     "kind": "linear",
-    "team": "healthcheck-email",
-    "prefix": "EMAIL",
+    "team": "example-app",
+    "prefix": "APP",
     "states": { "started": "In Progress", "done": "Done" },
     "modelLabels": { "fable": "fable", "haiku": "haiku", "sonnet": "sonnet", "opus": "opus" }
   },
@@ -44,14 +44,14 @@
   ],
   "deploy": {
     "provider": "fly",
-    "app": "healthcheck-email-preview",
-    "url": "https://preview.healthcheck.email",
+    "app": "example-app-preview",
+    "url": "https://preview.example.com",
     "healthz": "/healthz",
     "tagPrefix": "preview-",
     "workflow": "deploy-preview.yml",
     "ciWorkflow": "ci.yml",
     "runbooks": ["ops/FLY.md", "ops/LAUNCH.md"],
-    "preDeployCheck": "SMOKE_DOMAIN=stazelabs.com make prod-check"
+    "preDeployCheck": "SMOKE_DOMAIN=example.com make prod-check"
   },
   "state": { "committed": true }
 }

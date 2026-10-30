@@ -2,7 +2,48 @@
 
 Stazelabs' Claude Code workflow, packaged as a plugin marketplace. One install gives every project on a machine the same ticket-to-merge-to-deploy skills; each project keeps its own specifics (tracker team, gate command, branch style, deploy target) in a small committed profile that the setup skill writes.
 
-This repository is private and under close hold. Ask the owner for access.
+## The workflow
+
+You tend the project and drive it through tickets. Everything else is a skill that reads tickets, writes tickets, or lands code.
+
+```
+                        you write tickets
+                (a one-line placeholder, a note, a full spec)
+                                 │
+                                 ▼
+    ┌────────────────────────────────────────────────────────────┐
+    │                          tickets                           │◀──────────┐
+    └────────────────────────────────────────────────────────────┘           │
+                                 │                                           │
+                                 ▼                                           │
+         /stazelabs:plan          each ticket: a grounded plan on the        │
+                                  ticket, plus its Model label               │
+                                 │                                           │
+                                 ▼                                           │
+         /stazelabs:ticket        one ticket, an epic, or a queue left to    │
+                                  run overnight: branch, test-first, gate,   │
+                                  review, PR, merge, close                   │
+                                 │                                           │
+                                 ▼                                           │
+         /stazelabs:qa            drive the live app; each defect ───────────┤
+                                  becomes a ticket                           │
+                                                                             │
+    periodic   /stazelabs:hygiene, /stazelabs:continuity   audits ──▶ tickets┘
+               /stazelabs:update-docs                      docs reconciled with the code, via PR
+    as needed  /stazelabs-go:preview-deploy                ship main to the preview
+```
+
+The loop, in order:
+
+1. **Write tickets** of any shape, from a one-line placeholder to a full set of requirements. Audits and QA add their own.
+2. **Plan each one** with `/stazelabs:plan`. It explores the codebase, drafts a plan with test-first steps, gets your approval, posts the plan as a comment and sets the ticket's Model label (which model should do the work).
+3. **Tidy periodically** with `/stazelabs:hygiene` (engineering health) and `/stazelabs:continuity` (UI, UX and copy standards). They verify every finding and file grouped tickets after your yes. They never fix.
+4. **Implement** with `/stazelabs:ticket`: one ticket, an epic, or several in a row. Each goes branch, test-first, gate, final review, PR, merge, close, with every ruling recorded in the PR body. A common pattern is to queue up tickets from the steps above and let this run unattended, for instance overnight.
+5. **Verify** with `/stazelabs:qa`. It boots a disposable copy of the web app, drives it through Chrome, traces each defect to a line and files tickets after your yes.
+6. **Keep the docs honest** with `/stazelabs:update-docs` on a schedule. It reconciles the documentation with the code and lands the corrections through a PR.
+7. **Ship** with `/stazelabs-go:preview-deploy` whenever main is ready, after your explicit yes.
+
+Then back to step 1. The reasoning behind the model (model labels, rulings versus hard stops, why the gate is local) is in [docs/workflow.md](docs/workflow.md).
 
 ## What you get
 
@@ -19,15 +60,15 @@ This repository is private and under close hold. Ask the owner for access.
 
 `stazelabs-go` also ships a hook that restarts gopls when `.go` files change on disk.
 
-The four audit skills carry the method; what to look for in a given project lives in its **audit packs** at `.claude/agent-workflow/audits/<skill>.md`, which `/stazelabs:setup` scaffolds. Format: [plugins/stazelabs/docs/audit-packs.md](plugins/stazelabs/docs/audit-packs.md). `/stazelabs:qa` also needs the Claude in Chrome extension.
+The four audit skills carry the method; what to look for in a given project lives in its **audit packs** at `.claude/agent-workflow/audits/<skill>.md`, which `/stazelabs:setup` scaffolds. Format: [plugins/stazelabs/docs/audit-packs.md](plugins/stazelabs/docs/audit-packs.md). A filled profile and packs from a real project, anonymized, are under [examples/example-app](examples/example-app). `/stazelabs:qa` also needs the Claude in Chrome extension.
 
-The model behind the commands is in [docs/workflow.md](docs/workflow.md). The profile's keys are in [plugins/stazelabs/docs/profile.md](plugins/stazelabs/docs/profile.md).
+The profile's keys are in [plugins/stazelabs/docs/profile.md](plugins/stazelabs/docs/profile.md).
 
 ## Prerequisites
 
 - Claude Code with the **superpowers** plugin: `/plugin install superpowers@claude-plugins-official`. The ticket skill uses its brainstorming, planning, test-driven-development and code-review skills and refuses to run without it.
 - A **ticketing MCP** connected in your client. v1 speaks Linear. The plugin does not bundle the server; connect it under `/mcp` or your client's connectors.
-- **GitHub CLI** authenticated: `gh auth login`. For HTTPS access to this private repo also run `gh auth setup-git`, or have an SSH key for GitHub loaded in your agent.
+- **GitHub CLI** authenticated: `gh auth login`.
 - For `stazelabs-go`: a project that deploys through a tag-triggered GitHub Action to Fly.
 
 ## Install
@@ -68,4 +109,4 @@ Edit here, not in `~/.claude/plugins/cache`: that copy is replaced on update. Se
 
 ## License
 
-MIT; see [LICENSE](LICENSE). The repository itself is still private: the license governs what people who have access may do with it.
+MIT; see [LICENSE](LICENSE).
