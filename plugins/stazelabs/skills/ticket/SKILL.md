@@ -1,7 +1,7 @@
 ---
 name: ticket
-description: Resolve a ticket end to end: set it In Progress, branch from fresh main, implement test-first on the model its Model label names, pass the project's gate (and smoke for UI), run a final review, open a PR, merge it, and close the ticket. An epic (a ticket with sub-issues) fans out over its children after one confirmation. Use when the user runs /stazelabs:ticket with a ticket id or URL (e.g. "/stazelabs:ticket EMAIL-12"), or asks to resolve, build, knock out or finish a ticket or epic from start to merge.
-argument-hint: <ticket-id>   e.g. EMAIL-12
+description: Resolve a ticket end to end: set it In Progress, branch from fresh main, implement test-first on the model its Model label names, pass the project's gate (and smoke for UI), run a final review, open a PR, merge it, and close the ticket. An epic (a ticket with sub-issues) fans out over its children after one confirmation. Use when the user runs /stazelabs:ticket with a ticket id or URL (e.g. "/stazelabs:ticket PROJ-12"), or asks to resolve, build, knock out or finish a ticket or epic from start to merge.
+argument-hint: <ticket-id>   e.g. PROJ-12
 ---
 
 # /stazelabs:ticket: resolve a ticket start to finish
@@ -70,7 +70,7 @@ A skill can't change its own main-loop model, so a label that differs from the s
 ## 2. Preflight and branch from fresh main
 - `git status --porcelain` must be empty. If it isn't, don't bundle unrelated work: report it and stop.
 - `git fetch origin`, `git checkout <repo.mainBranch>`, `git pull --ff-only origin <repo.mainBranch>`, then check `git status --porcelain` again.
-- `git checkout -b <branch>` where `<branch>` is `repo.branchPattern` with `{prefix_lower}` = the prefix lowercased, `{number}` = the ticket number, `{slug}` = a few lowercase words from the title (`EMAIL-12` "Show domain favicons on cards" → `email-12-domain-favicons`). If the branch exists, check it out and merge main into it (never rebase a pushed branch), or suffix `-2`.
+- `git checkout -b <branch>` where `<branch>` is `repo.branchPattern` with `{prefix_lower}` = the prefix lowercased, `{number}` = the ticket number, `{slug}` = a few lowercase words from the title (`PROJ-12` "Show domain favicons on cards" → `proj-12-domain-favicons`). If the branch exists, check it out and merge main into it (never rebase a pushed branch), or suffix `-2`.
 
 ## 3. Choose the flow
 - **Small ticket** (a copy fix, one handler or template tweak, a doc article, a single-package bug): skip spec and plan. Go test-first with superpowers:test-driven-development: the failing test, then the fix, then green.
@@ -113,7 +113,7 @@ If the gate or smoke can't be made green, don't merge: leave the work on the bra
 - Minors are deferred, not fixed, and listed in the PR body.
 
 ## 7. Commit on the branch
-Commit subjects follow `repo.commitFormat` (`{Area}: {summary} ({id})` gives `Admin: return to the domain's page after Re-evaluate (EMAIL-678)`), with a short body of what and why. End the message with the attribution lines this session specifies (the harness names the model that did the work). Several focused commits are fine.
+Commit subjects follow `repo.commitFormat` (`{Area}: {summary} ({id})` gives `Admin: return to the list after Re-evaluate (PROJ-678)`), with a short body of what and why. End the message with the attribution lines this session specifies (the harness names the model that did the work). Several focused commits are fine.
 
 ## 8. Open the PR, wait for CLEAN, merge
 - `git push -u origin <branch>`. Never push to main, never force-push.

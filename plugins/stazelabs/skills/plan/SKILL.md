@@ -1,7 +1,7 @@
 ---
 name: plan
-description: Draft an implementation plan for one ticket, get it approved, then post the plan to the ticket as a comment and set its Model label (fable/haiku/sonnet/opus) to the model best suited to do the work. Use when the user runs /stazelabs:plan with a ticket id or URL (e.g. "/stazelabs:plan EMAIL-12"), or asks to plan, scope or spec out a ticket without building it.
-argument-hint: <ticket-id>   e.g. EMAIL-12
+description: Draft an implementation plan for one ticket, get it approved, then post the plan to the ticket as a comment and set its Model label (fable/haiku/sonnet/opus) to the model best suited to do the work. Use when the user runs /stazelabs:plan with a ticket id or URL (e.g. "/stazelabs:plan PROJ-12"), or asks to plan, scope or spec out a ticket without building it.
+argument-hint: <ticket-id>   e.g. PROJ-12
 ---
 
 # /stazelabs:plan: turn a ticket into an approved, model-tagged plan
@@ -50,7 +50,7 @@ Follow the project's plan style (if it keeps plans in a folder such as `docs/sup
 - **Risks and out of scope.**
 - **Size note**: if the work is big enough for a plan file (several tasks, a migration plus UI, or more than one package), say so and point `/stazelabs:ticket` to superpowers:writing-plans (and superpowers:brainstorming first if it needs a spec). The comment is then the outline; the full plan is written at the start of `/stazelabs:ticket`.
 
-Draft it in the scratchpad if it's long, inline for a small ticket. Match the project's copy rules from its authority documents (healthcheck, for instance: sentence case, no exclamation points).
+Draft it in the scratchpad if it's long, inline for a small ticket. Match the project's copy rules from its authority documents (for instance: sentence case, no exclamation points).
 
 ## 4. Pick the Model label
 Choose exactly one tier; the label names are `tracker.modelLabels.<tier>`:

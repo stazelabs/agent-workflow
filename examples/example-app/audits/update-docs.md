@@ -43,7 +43,7 @@ Sentence case, no exclamation points, "workspace" not "account", "sign in" not "
 Help articles and the glossary are end-user copy, so the bar is higher.
 
 - **Shape.** `internal/help/articles/<slug>.md`: front matter between `---` lines with `title`, `section` (`getting-started` or `basics`), `summary` and `order`, then a Markdown body. The file name is the slug and the URL: **never rename it**. Keep `order` ascending within a section.
-- **Every article ends with a `## In healthcheck.email` section** that points into the app (`TestContentIsComplete` fails otherwise).
+- **Every article ends with a `## In example-app` section** that points into the app (`TestContentIsComplete` fails otherwise).
 - Links into help are `/help/<slug>` or `/help/<slug>#<anchor>` and must resolve to an article or glossary term (`TestLinksResolve`). Never link to a slug that does not exist.
 - **Glossary** is `internal/help/glossary.json`, a JSON array indented with **one space**, each term with `slug`, `term`, `short` (at most 140 characters, enforced) and `body`. At least 18 terms. `TestEveryFamilyHasATerm` needs a term for every record family. Edit it as JSON, not text: check that `json.dumps(data, indent=1, ensure_ascii=False)` plus a trailing newline round-trips the file before writing, so the diff stays proportional. Assert each replacement matches exactly once.
 - **Copy follows CLAUDE.md's Copy rule**; never name the model provider (no "Claude", no "Anthropic"). Plain answer first, detail one step away, and never describe the design to the reader ("a calm layout", "a quiet gap").

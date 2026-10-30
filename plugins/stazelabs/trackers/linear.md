@@ -14,7 +14,7 @@ The Linear MCP is a connector the person set up themselves; it is not bundled. I
 
 | Verb | Tool suffix | Arguments and notes |
 |---|---|---|
-| Read a ticket | `get_issue` | `id`: the identifier (`EMAIL-12`) or a Linear URL's identifier. Returns `title`, `description`, `identifier`, `url`, `status`, `labels`, `team`, and whether it has sub-issues. Pass `includeRelations: true` to read `blockedBy`. |
+| Read a ticket | `get_issue` | `id`: the identifier (`PROJ-12`) or a Linear URL's identifier. Returns `title`, `description`, `identifier`, `url`, `status`, `labels`, `team`, and whether it has sub-issues. Pass `includeRelations: true` to read `blockedBy`. |
 | Read comments | `list_comments` | `issueId`: the identifier. Read every comment; plans and scope rulings live there. |
 | Set state | `save_issue` | `id` and `state: "<name>"` using the profile's `tracker.states.*` names verbatim. Only if refused, `list_issue_statuses` for the team and use the `started` or `completed` type's name. |
 | Comment | `save_comment` | `issueId`, `body` as markdown with real newlines (no escape sequences). |

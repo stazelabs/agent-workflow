@@ -1,6 +1,6 @@
 # The workflow
 
-This is the model the skills implement. It grew on healthcheck.email over a few hundred tickets; the skills are its procedure, this page is its reasoning.
+This is the model the skills implement. It grew on a real product over a few hundred tickets; the skills are its procedure, this page is its reasoning.
 
 ## The loop
 

@@ -4,7 +4,7 @@ Read by /stazelabs:hygiene. Headings are fixed; see the agent-workflow plugin's 
 
 ## Standards
 
-Read [CLAUDE.md](../../../CLAUDE.md) in full, especially "Layout", "Hard invariants" and "Rejected", and the scoped rules in `.claude/rules/` (database, handlers, security). Also read the design and the engine doc when a dimension needs them: [docs/superpowers/specs/2026-10-08-healthcheck-email-mvp-design.md](../../../docs/superpowers/specs/2026-10-08-healthcheck-email-mvp-design.md) and [docs/ENGINE.md](../../../docs/ENGINE.md). Quote a dimension's rules from CLAUDE.md's "Hard invariants" for most dimensions.
+Read [CLAUDE.md](../../../CLAUDE.md) in full, especially "Layout", "Hard invariants" and "Rejected", and the scoped rules in `.claude/rules/` (database, handlers, security). Also read the design and the engine doc when a dimension needs them: [docs/superpowers/specs/2026-10-08-mvp-design.md](../../../docs/superpowers/specs/2026-10-08-mvp-design.md) and [docs/ENGINE.md](../../../docs/ENGINE.md). Quote a dimension's rules from CLAUDE.md's "Hard invariants" for most dimensions.
 
 ## Pre-pass
 

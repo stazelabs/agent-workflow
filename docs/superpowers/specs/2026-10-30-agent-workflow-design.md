@@ -4,7 +4,7 @@ Date: 2026-10-30. Status: approved by the owner.
 
 ## Intent
 
-healthcheck-email grew a working Claude Code workflow: a Linear ticket is planned and model-tagged (`/plan`), built test-first through a gate, reviewed, merged with a merge commit and closed (`/ticket`), then shipped by a tag-triggered, gate-first deploy (`/preview-deploy`). Those skills live in one repo and name that repo's team, app, gate and layout. This project moves the workflow into an installable, centrally maintained plugin so any Stazelabs project (and later anyone) gets it in one step, configures its own specifics at first run, and picks up improvements with a plugin update.
+The first project grew a working Claude Code workflow: a Linear ticket is planned and model-tagged (`/plan`), built test-first through a gate, reviewed, merged with a merge commit and closed (`/ticket`), then shipped by a tag-triggered, gate-first deploy (`/preview-deploy`). Those skills live in one repo and name that repo's team, app, gate and layout. This project moves the workflow into an installable, centrally maintained plugin so any Stazelabs project (and later anyone) gets it in one step, configures its own specifics at first run, and picks up improvements with a plugin update.
 
 ## Goals
 
@@ -16,7 +16,7 @@ healthcheck-email grew a working Claude Code workflow: a Linear ticket is planne
 
 ## Non-goals (v1)
 
-- The audit skills (hygiene, continuity, qa, update-docs) and their state files. They stay in healthcheck until v2. (Shipped in 0.2.0 as generic skills plus per-project audit packs; see `plugins/stazelabs/docs/audit-packs.md`.)
+- The audit skills (hygiene, continuity, qa, update-docs) and their state files. They stay in the first project until v2. (Shipped in 0.2.0 as generic skills plus per-project audit packs; see `plugins/stazelabs/docs/audit-packs.md`.)
 - A second tracker adapter. Linear ships; the seam for others is documented.
 - Bundling the Linear MCP or superpowers. Both are prerequisites the setup skill checks.
 - Shipping `.claude/rules`. Plugins cannot carry rules; they stay in each project.
@@ -48,7 +48,7 @@ agent-workflow/
 │   ├── profile.md                         # the profile schema, every key, which skill reads it
 │   ├── trackers.md                        # the adapter seam: verbs each skill needs and how an adapter file maps them
 │   ├── contributing.md                    # dev loop (marketplace add from local path), `claude plugin validate`, never edit the installed cache, PR back, how a profile `version` bump is handled
-│   └── migrating-a-project.md             # moving existing local skills to the plugin (the healthcheck steps, generalized)
+│   └── migrating-a-project.md             # moving existing local skills to the plugin (the first project's steps, generalized)
 ├── plugins/
 │   ├── stazelabs/
 │   │   ├── .claude-plugin/plugin.json     # name stazelabs, version 0.1.0
@@ -57,13 +57,13 @@ agent-workflow/
 │   │   │   ├── ticket/SKILL.md
 │   │   │   └── plan/SKILL.md
 │   │   ├── trackers/linear.md             # verb → Linear tool-name suffix mapping (prefix found at run time), label-merge rule, state names, epic enumeration
-│   │   ├── templates/profile.example.json # a filled example (healthcheck's values, anonymized where sensitive)
+│   │   ├── templates/profile.example.json # a filled example (anonymized from the first project)
 │   │   └── docs/preamble.md               # the shared §0 text every skill copies: read the profile, check version and the keys this skill needs, stop with "run /stazelabs:setup" if any is missing
 │   └── stazelabs-go/
 │       ├── .claude-plugin/plugin.json     # name stazelabs-go, version 0.1.0
 │       ├── skills/preview-deploy/SKILL.md
-│       └── hooks/hooks.json               # the gopls restart PostToolUse hook from healthcheck's settings.json, using ${CLAUDE_PROJECT_DIR}
-└── examples/healthcheck-email/            # the real profile healthcheck commits, as the worked example
+│       └── hooks/hooks.json               # the gopls restart PostToolUse hook from the first project's settings.json, using ${CLAUDE_PROJECT_DIR}
+└── examples/example-app/                  # a worked example: a real profile and audit packs, anonymized
 ```
 
 ### Profile and state (per project)
@@ -75,11 +75,11 @@ Profile keys (v1; `docs/profile.md` is the authority once written):
 ```json
 {
   "version": 1,  // no MCP prefix key: the adapter lists tool suffixes and each skill finds the live prefix with ToolSearch at run time
-  "project": { "name": "healthcheck.email", "authority": ["CLAUDE.md", "docs/superpowers/specs"] },
+  "project": { "name": "example-app", "authority": ["CLAUDE.md", "docs/superpowers/specs"] },
   "tracker": {
     "kind": "linear",
-    "team": "healthcheck-email",
-    "prefix": "EMAIL",
+    "team": "example-app",
+    "prefix": "APP",
     "states": { "started": "In Progress", "done": "Done" },
     "modelLabels": { "fable": "fable", "haiku": "haiku", "sonnet": "sonnet", "opus": "opus" }
   },
@@ -104,14 +104,14 @@ Profile keys (v1; `docs/profile.md` is the authority once written):
   "hardStops": ["any Fly, DNS or Resend action", "anything destructive", "changing a recorded product decision in CLAUDE.md or an approved spec"],
   "deploy": {
     "provider": "fly",
-    "app": "healthcheck-email-preview",
-    "url": "https://preview.healthcheck.email",
+    "app": "example-app-preview",
+    "url": "https://preview.example.com",
     "healthz": "/healthz",
     "tagPrefix": "preview-",
     "workflow": "deploy-preview.yml",
     "ciWorkflow": "ci.yml",
     "runbooks": ["ops/FLY.md", "ops/LAUNCH.md"],
-    "preDeployCheck": "SMOKE_DOMAIN=stazelabs.com make prod-check"
+    "preDeployCheck": "SMOKE_DOMAIN=example.com make prod-check"
   },
   "state": { "committed": true }
 }
@@ -122,14 +122,14 @@ Every skill opens with the same preamble (§0), copied from `docs/preamble.md` w
 ### Skill behavior changes when porting
 
 - **setup**: detect (tracker MCP tools present via ToolSearch; `gh auth status`; `fly`/`flyctl` if deploy requested; superpowers plugin installed, since ticket invokes brainstorming/writing-plans/executing-plans/test-driven-development/requesting-code-review). Ask (team picked from `list_teams`; prefix read from the team; label names, offer to create missing Model labels via `save_issue_label`; gate command, suggesting `make` targets or `go test ./...` / `npm test` from what the repo has; branch/commit/merge style; review paths; hard stops; deploy section if the owner says the project deploys through a tag-triggered action (asked, not detected: installed plugins are not reliably discoverable from a skill); state committed?). Write profile, create state dir, add gitignore line if needed, print a summary. Re-run shows the current profile and edits by section. Never writes to the tracker except label creation after a yes.
-- **ticket**: §0 preamble replaces the Linear tool load with "read `${CLAUDE_PLUGIN_ROOT}/trackers/<kind>.md` and load the tools it names". §1 states and label names from the profile. §1b model table unchanged but label names via `tracker.modelLabels`. §2 branch from `repo.branchPattern`. §4 drops the healthcheck invariant list: "the files in `project.authority` are the authority". §5 gate and smoke from `gate`. §6 threshold from `review`. §7 commit format from `repo.commitFormat`; the co-author trailer comes from the harness, the skill says "end with the attribution the session specifies". §8 merge style from `repo`. Hard stops from `hardStops` plus the two universal ones (destructive actions, recorded decisions).
-- **plan**: same preamble; label group from `tracker.modelLabels`; "follow this project's plan style" points at `project.authority` and any `docs/superpowers/plans` if present; the reuse list of healthcheck helpers is removed (Explore finds them); verification section quotes `gate.command` and `gate.smoke`.
+- **ticket**: §0 preamble replaces the Linear tool load with "read `${CLAUDE_PLUGIN_ROOT}/trackers/<kind>.md` and load the tools it names". §1 states and label names from the profile. §1b model table unchanged but label names via `tracker.modelLabels`. §2 branch from `repo.branchPattern`. §4 drops the hard-coded invariant list: "the files in `project.authority` are the authority". §5 gate and smoke from `gate`. §6 threshold from `review`. §7 commit format from `repo.commitFormat`; the co-author trailer comes from the harness, the skill says "end with the attribution the session specifies". §8 merge style from `repo`. Hard stops from `hardStops` plus the two universal ones (destructive actions, recorded decisions).
+- **plan**: same preamble; label group from `tracker.modelLabels`; "follow this project's plan style" points at `project.authority` and any `docs/superpowers/plans` if present; the reuse list of project helpers is removed (Explore finds them); verification section quotes `gate.command` and `gate.smoke`.
 - **preview-deploy**: all Fly names, URLs, workflow files and runbook paths from `deploy`; the §6 wiped-volume recovery becomes a generic "after a wiped volume, see runbooks" with the Fly commands kept because the provider is fly; the hard gate ("owner says yes, every time") stays verbatim.
 - Model label semantics stay: fable = spec work, haiku/sonnet/opus = implementation tiers. Documented in `docs/workflow.md`.
 
 ### Dev and release loop
 
-- Develop with the marketplace added from the local path: `/plugin marketplace add /Users/cstaszak/Stazelabs/projects/agent-workflow`, install from it, iterate, `/plugin update`. Consumers add `stazelabs/agent-workflow`.
+- Develop with the marketplace added from the local path: `/plugin marketplace add /path/to/agent-workflow`, install from it, iterate, `/plugin update`. Consumers add `stazelabs/agent-workflow`.
 - `claude plugin validate plugins/stazelabs` and `plugins/stazelabs-go` before every commit (also a `make check` target in the repo).
 - Profile `version` is an integer; a key addition that skills require bumps it, the preamble reports the gap, `/stazelabs:setup` migrates.
 
