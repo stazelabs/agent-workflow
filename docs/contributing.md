@@ -33,3 +33,15 @@ Edit, then `make check` (validates the marketplace and both plugins), then `clau
 2. Try the affected skill once against a real project.
 3. Bump `version` in the affected `plugin.json` (patch for wording, minor for a new key or behavior) and add a line to `CHANGELOG.md`.
 4. PR, merge with a merge commit. Marketplace entries carry no `version`, so consumers get main on their next update.
+
+## Gotcha: a local marketplace and project-scope installs
+
+Claude Code allows one source per marketplace name. While your user settings point `agent-workflow` at the local checkout, `claude plugin marketplace add stazelabs/agent-workflow --scope project` is refused ("its source doesn't match its extraKnownMarketplaces entry"). Write the project entry by hand instead, so teammates get the GitHub source:
+
+```json
+"extraKnownMarketplaces": {
+  "agent-workflow": { "source": { "source": "github", "repo": "stazelabs/agent-workflow" } }
+}
+```
+
+`claude plugin install stazelabs@agent-workflow --scope project` works as usual and records `enabledPlugins`.
