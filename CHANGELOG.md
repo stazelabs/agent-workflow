@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.1 (2026-10-30)
 
 - Linear adapter: search-tickets dedupes by listing open tickets per state type, since a `query` with a `state` filter can come back empty.
 - Example healthcheck hygiene pack: govulncheck runs as `@latest` and never with `GOFLAGS=-mod=mod`.
