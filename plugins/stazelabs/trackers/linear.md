@@ -18,11 +18,11 @@ The Linear MCP is a connector the person set up themselves; it is not bundled. I
 | Read comments | `list_comments` | `issueId`: the identifier. Read every comment; plans and scope rulings live there. |
 | Set state | `save_issue` | `id` and `state: "<name>"` using the profile's `tracker.states.*` names verbatim. Only if refused, `list_issue_statuses` for the team and use the `started` or `completed` type's name. |
 | Comment | `save_comment` | `issueId`, `body` as markdown with real newlines (no escape sequences). |
-| Set labels | `save_issue` | `labels` **replaces the whole set**. Always: take the current `labels`, drop any that is one of `tracker.modelLabels`' values, add the chosen one, send the merged list. Never drop a label you didn't mean to. |
+| Set the Model label | `save_issue` | `id`, `removeLabels`: the `tracker.modelLabels` values currently on the ticket, `addLabels`: the chosen one. Both are incremental and leave every other label alone. Never send `labels`: it replaces the whole set. |
 | List children | `list_issues` | `parentId`: the epic's identifier. Page with `cursor` until exhausted. |
 | List labels | `list_issue_labels` | Filter by `team` to confirm the Model label group exists. |
 | List teams | `list_teams` | Used by setup to let the person pick; the team's `key` is the ticket prefix. |
-| Create label | `save_issue_label` | `name`, `teamId`, optional `parentId` for a group. Setup only, after a yes. |
+| Create label | `save_issue_label` | `name`, `teamId` (the team's UUID from `list_teams`), `parent`: the group's name (create the group first with `isGroup: true`, `groupType: "singleSelect"`). Setup only, after a yes. |
 | Who am I | `whoami` | Setup's connectivity check. |
 
 ## Semantics the skills rely on
@@ -30,4 +30,4 @@ The Linear MCP is a connector the person set up themselves; it is not bundled. I
 - Identifiers are `<PREFIX>-<n>`; the prefix is the team key and matches `tracker.prefix`.
 - A ticket with sub-issues is an epic. Children already Done, Canceled or Duplicate are skipped.
 - State names are stable per workspace; don't look them up on every run.
-- `save_issue` with `labels` is the only label write, and it is a full replace (see Set labels).
+- Label writes use `addLabels` and `removeLabels`; `labels` is a full replace and is never sent.
