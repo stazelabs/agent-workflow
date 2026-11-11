@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- `/stazelabs-go:preview-deploy` runs `deploy.preDeployCheck` itself instead of asking whether the owner has; a failure stops the deploy.
+- A deploy queued behind other work asks for its yes up front: `/stazelabs:ticket` asks with its first confirmation, and the yes covers main after the queued work if only that work landed, every gate passed and the pre-deploy check passes.
+
 ## 0.2.2 (2026-10-30)
 
 - README: an overview of the loop with a diagram before the command inventory; the repository is no longer described as private.

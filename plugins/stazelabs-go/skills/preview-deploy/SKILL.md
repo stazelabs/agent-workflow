@@ -32,7 +32,8 @@ Nothing here pushes a tag or touches the provider without an explicit owner "yes
   - a summary of what changed since the build the preview is serving (`git log --oneline <serving-sha>..HEAD`, grouped in a few lines; the serving sha comes from the site if it shows one, else the last tag whose run succeeded; say so if there is no earlier tag).
 - Then stop and wait. Only an explicit "yes" (or equivalent) in chat for this deploy counts. Silence, a prior approval, or "go ahead" said for an earlier deploy does not.
 - Approval never carries over. A later deploy, a retry after a failed run, or a new tag all need a fresh ask.
-- If the commit or tag changes after the owner answered, ask again.
+- **Ask when the deploy is queued, not when it's reached.** When the deploy is the last step of a longer request ("resolve these tickets, then cut a preview deploy"), ask for the yes at the start, in the same message as any other up-front confirmation, so the owner isn't left to come back hours later to a waiting question. Name what is known then: the serving sha, the tag prefix, and that the target is main as it stands once the queued work merges. That early yes covers that commit on three conditions: every queued item merged with a passing gate, nothing but the queued work landed on main in between, and `deploy.preDeployCheck` (if any) passes. If any condition fails, ask again at step 4. When nothing is queued ahead of the deploy, ask at step 4.
+- If the commit or tag changes after the owner answered, ask again, unless an early yes's conditions hold: then the commit changes only by the queued work, and the tag only by the date.
 
 ## 1. Preflight: main must be clean, pushed and current
 
@@ -42,7 +43,7 @@ Stop with a clear message if any check fails.
 - `git branch --show-current` must be `repo.mainBranch`. Do not auto-checkout.
 - `git status --porcelain` must be empty.
 - `git rev-parse HEAD` must equal `git rev-parse origin/<repo.mainBranch>`. If ahead, tell the owner to push first. If behind, tell them to `git pull --ff-only`.
-- If the profile has `deploy.preDeployCheck`, remind the owner that the runbooks ask for it on this commit. Do not run it unasked; ask whether they have.
+- If the profile has `deploy.preDeployCheck`, run it on this commit; don't ask whether the owner has. Start it in the background so steps 2 and 3 go on meanwhile. If a tool it needs isn't running (Docker, say), start it if that's routine, else report. If the check fails, stop: report the failing output and don't ask for the yes. A pass goes in the step 4 summary.
 
 ## 2. Check CI on this commit (best effort)
 
@@ -78,7 +79,7 @@ The first deploy of a day is `preview-2026-10-11`, a second is `preview-2026-10-
 
 ## 4. Ask, then cut and push
 
-Present the hard-gate summary and wait for "yes". After it:
+Present the hard-gate summary and wait for "yes", or, with an early yes whose conditions hold, present it and go on. After it:
 
 - `git tag "$TAG"` (lightweight is fine), then `git push origin "$TAG"`.
 - Tell the owner the tag name. Never push to main and never force-push.
