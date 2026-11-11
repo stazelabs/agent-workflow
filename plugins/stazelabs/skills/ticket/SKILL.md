@@ -40,13 +40,14 @@ Confirm the superpowers plugin is installed: its skills (`superpowers:test-drive
 - **Read the description in full, then read every comment.** A `/stazelabs:plan` comment is the plan; scope decisions often live in comments.
 - **Sub-issues → epic mode (§1a).** Don't resolve the parent directly.
 - Set the ticket to `tracker.states.started` (adapter verb "Set state").
+- If the request also ends in a deploy and no other confirmation comes first, ask for the deploy's yes now, before starting, as the deploy skill's hard gate describes for a queued deploy; then run unattended.
 - If scope is still unclear after description, comments and code, make the narrowest reading that fits the authority documents, and record it as a ruling. Stop only if the clear reading would change a recorded product decision.
 
 ## 1a. Epic mode: resolve the children in sequence
 1. **Enumerate:** list the epic's children (adapter verb "List children"), paging until exhausted.
 2. **Filter:** drop children already done, canceled or duplicate, children that are epics themselves, and children labeled `tracker.modelLabels.fable` (spec work, §1c). Record what you dropped and why.
 3. **Order:** blockers first (read each with relations; never start a child before its blockers are done), then priority, Urgent to Low.
-4. **Confirm once.** Post the ordered list (each child as its own branch and PR, with its resolved model from §1b) plus the skipped children and reasons. Get one go-ahead; after it, run the rest unattended.
+4. **Confirm once.** Post the ordered list (each child as its own branch and PR, with its resolved model from §1b) plus the skipped children and reasons. Get one go-ahead; after it, run the rest unattended. If the request also ends in a deploy ("then cut a preview deploy"), ask for the deploy's yes in this same message, as the deploy skill's hard gate describes for a queued deploy.
 5. **Loop sequentially.** Run the full single-ticket flow (§2 to §10) for each child before starting the next, each from fresh main. Never parallelize.
 6. **Isolate failures.** A child that can't reach green, or hits a hard stop, is skipped: leave its work on its branch, record it, continue. A dirty tree between children, or `gh` being unavailable, halts the batch. Check `git status --porcelain` is empty before each child.
 7. **Close the parent.** Comment on the epic with each child's outcome (PR and merge sha, or skipped and why). Set it to `tracker.states.done` only if every child reached done.
